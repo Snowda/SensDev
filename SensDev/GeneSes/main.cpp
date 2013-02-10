@@ -331,22 +331,18 @@ double oxygen_sensor::linearise(){
  * 
  */
 int main(int argc, char** argv) {
-    int i;
-    int quiet = 0;  /* Value for the "-q" optional argument. */
+    
+    sensor sensor1;
+    double max_val, min_val, bit_resolution;
+    double increments, bit_calc;
+    int safe_bits, no_of_bits, i;
+    int quiet = 0;  // Value for the "-q" optional argument. //
 
-    for (i = 1; i < argc; i++)  /* Skip argv[0] (program name). */
-    {
-        /*
-         * Use the 'strcmp' function to compare the argv values
-         * to a string of your choice (here, it's the optional
-         * argument "-q").  When strcmp returns 0, it means that the
-         * two strings are identical.
-         */
-
-        if (strcmp(argv[i], "-q") == 0){
-            quiet = 1;  /* This is used as a boolean value. */
+    for (i = 1; i < argc; i++){  // Skip argv[0] (program name).
+        if ((strcmp(argv[i], "-q") == 0) || (strcmp(argv[i], "-quiet") == 0)){
+            quiet = 1;  // suppresses final output
         } else {
-            /* Process non-optional arguments here. */
+            quiet = 0;
         }
         if ((strcmp(argv[i], "-help") == 0) || (strcmp(argv[i], "-h") == 0) 
                 || (strcmp(argv[i], "-?") == 0)){
@@ -358,27 +354,19 @@ int main(int argc, char** argv) {
             exit(EXIT_SUCCESS);
         }
         
-        if (strcmp(argv[i], "-d") == 0){
-            quiet = 1;  /* This is used as a boolean value. */
+        if (strcmp(argv[i], "-x") == 0){
+            
         } else {
-            /* Process non-optional arguments here. */
+            
         }
     }
-    
-    sensor sensor1;
-    double max_val, min_val, bit_resolution;
-    double increments, bit_calc;
-    int safe_bits, no_of_bits;
-    
+        
     cout << "Please enter desired maximum range: \n";
     cin >> max_val;
-    cout << max_val << "\n";
     cout << "Please enter desired minimum range: \n";
     cin >> min_val;
-    cout << min_val << "\n";
     cout << "Please enter desired resolution: \n";
     cin >> bit_resolution;
-    cout << bit_resolution << "\n";
     //calculate required bits
     increments = (max_val - min_val)/bit_resolution;
     bit_calc = log(increments)/log(2);
@@ -412,8 +400,13 @@ int main(int argc, char** argv) {
     cout << "\n\n";
 
     sensor1.choose_chips();
-    sensor1.read_hardware();
     
+    if(quiet){
+        exit(EXIT_SUCCESS);
+    } else {
+        sensor1.read_hardware();
+        exit(EXIT_SUCCESS);
+    }
     // produce relevant code for communication protocol
     // give code relevant information for future lookup
     //output parts list, datasheets and purchase links
