@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <string>
 #include <sstream>
+#include <cstring>
 
 using std::string;
 using std::stringstream;
@@ -124,6 +125,11 @@ private:
     input();
     virtual ~input();
 };
+
+void printHelp(void){
+    cout << "you need help";
+}
+
 void merge_f2f(const char* file_to_open, const char* file_to_append_to){
     ifstream atd_in;
     ofstream atd_out;
@@ -317,6 +323,40 @@ double oxygen_sensor::linearise(){
  * 
  */
 int main(int argc, char** argv) {
+    int i;
+    int quiet = 0;  /* Value for the "-q" optional argument. */
+
+    for (i = 1; i < argc; i++)  /* Skip argv[0] (program name). */
+    {
+        /*
+         * Use the 'strcmp' function to compare the argv values
+         * to a string of your choice (here, it's the optional
+         * argument "-q").  When strcmp returns 0, it means that the
+         * two strings are identical.
+         */
+
+        if (strcmp(argv[i], "-q") == 0){
+            quiet = 1;  /* This is used as a boolean value. */
+        } else {
+            /* Process non-optional arguments here. */
+        }
+        if ((strcmp(argv[i], "-help") == 0) || (strcmp(argv[i], "-h") == 0) 
+                || (strcmp(argv[i], "-?") == 0)){
+                printHelp();
+                exit(EXIT_SUCCESS);
+        }
+        if (strcmp(argv[i], "-x") == 0){
+            quiet = 1;  /* This is used as a boolean value. */
+        } else {
+            /* Process non-optional arguments here. */
+        }
+        if (strcmp(argv[i], "-d") == 0){
+            quiet = 1;  /* This is used as a boolean value. */
+        } else {
+            /* Process non-optional arguments here. */
+        }
+    }
+    
     sensor sensor1;
     double max_val, min_val, bit_resolution;
     double increments, bit_calc;
