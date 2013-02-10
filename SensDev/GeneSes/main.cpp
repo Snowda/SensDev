@@ -30,6 +30,10 @@ string comms_chip_list[] = { "USB", "RS232" };
 string regulator_chip_list[] = { "5v Regulator", "12v Regulator", "LTC4032V12"};
 string processor_chip_list[] = { "PIC18f4525", "PIC16F84A" };
     
+int code_version_major = 0;
+int code_version_minor = 0;
+int code_version_revision = 1;
+
 class sensor {
 public:
     sensor();
@@ -128,6 +132,10 @@ private:
 
 void printHelp(void){
     cout << "you need help";
+}
+void printVersion(void){
+    cout << "SensDev Version v-" << code_version_major << "." 
+            << code_version_minor << "." << code_version_revision << "\n";
 }
 
 void merge_f2f(const char* file_to_open, const char* file_to_append_to){
@@ -345,11 +353,11 @@ int main(int argc, char** argv) {
                 printHelp();
                 exit(EXIT_SUCCESS);
         }
-        if (strcmp(argv[i], "-x") == 0){
-            quiet = 1;  /* This is used as a boolean value. */
-        } else {
-            /* Process non-optional arguments here. */
+        if ((strcmp(argv[i], "-v") == 0) || (strcmp(argv[i], "-version") == 0)){
+            printVersion();
+            exit(EXIT_SUCCESS);
         }
+        
         if (strcmp(argv[i], "-d") == 0){
             quiet = 1;  /* This is used as a boolean value. */
         } else {
