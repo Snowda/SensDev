@@ -341,23 +341,18 @@ int main(int argc, char** argv) {
     for (i = 1; i < argc; i++){  // Skip argv[0] (program name).
         if ((strcmp(argv[i], "-q") == 0) || (strcmp(argv[i], "-quiet") == 0)){
             quiet = 1;  // suppresses final output
-        } else {
-            quiet = 0;
-        }
-        if ((strcmp(argv[i], "-help") == 0) || (strcmp(argv[i], "-h") == 0) 
+        } else if ((strcmp(argv[i], "-help") == 0) || (strcmp(argv[i], "-h") == 0) 
                 || (strcmp(argv[i], "-?") == 0)){
                 printHelp();
                 exit(EXIT_SUCCESS);
-        }
-        if ((strcmp(argv[i], "-v") == 0) || (strcmp(argv[i], "-version") == 0)){
+        } else if ((strcmp(argv[i], "-v") == 0) || (strcmp(argv[i], "-version") == 0)){
             printVersion();
             exit(EXIT_SUCCESS);
-        }
-        
-        if (strcmp(argv[i], "-x") == 0){
+        } else if (strcmp(argv[i], "-x") == 0){
             
         } else {
-            
+            cout << "invalid argument";
+            exit(EXIT_FAILURE);
         }
     }
         
