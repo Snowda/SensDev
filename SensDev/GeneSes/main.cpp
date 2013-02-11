@@ -13,6 +13,7 @@
 #include <string>
 #include <sstream>
 #include <cstring>
+#include <cstdlib> 
 
 using std::string;
 using std::stringstream;
@@ -131,7 +132,10 @@ private:
 };
 
 void printHelp(void){
-    cout << "you need help";
+    cout << "SensDev command line arguments";
+    cout << "-q -quiet : Suppresses final output text.\n";
+    cout << "-h -help : Returns summary of command line arguments.\n";
+    cout << "-v -version : Returns SensDev version number.\n";
 }
 void printVersion(void){
     cout << "SensDev Version v-" << code_version_major << "." 
@@ -350,7 +354,11 @@ int main(int argc, char** argv) {
             exit(EXIT_SUCCESS);
         } else if (strcmp(argv[i], "-x") == 0){
             
-        } else {
+        } else if (strcmp(argv[i], "-max=") == 0){
+            int atm = atoi( argv[1] );
+        } else if (strcmp(argv[i], "-min=") == 0){
+            
+        }else {
             cout << "invalid argument";
             exit(EXIT_FAILURE);
         }
