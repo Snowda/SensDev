@@ -345,30 +345,38 @@ int main(int argc, char** argv) {
     int safe_bits, no_of_bits, i;
     int quiet = 0;  // Value for the "-q" optional argument. //
 
-    for (i = 1; i < argc; i++){  // Skip argv[0] (program name).
-        if ((strcmp(argv[i], "-q") == 0) || (strcmp(argv[i], "-quiet") == 0)){
-            quiet = 1;  // suppresses final output
-        } else if ((strcmp(argv[i], "-help") == 0) || (strcmp(argv[i], "-h") == 0) 
-                || (strcmp(argv[i], "-?") == 0)){
-                printHelp();
-                exit(EXIT_SUCCESS);
-        } else if ((strcmp(argv[i], "-v") == 0) || (strcmp(argv[i], "-version") == 0)){
-            printVersion();
-            exit(EXIT_SUCCESS);
-        } else if (strcmp(argv[i], "-x") == 0){
+    if(argc == 1){
+        cout << "Please enter desired maximum range: \n";
+         cin >> max_val;
+        cout << "Please enter desired minimum range: \n";
+        cin >> min_val;
+        cout << "Please enter desired resolution: \n";
+         cin >> bit_resolution;
+    } else {
+        for (i = 1; i < argc; i++){  // Skip argv[0] (program name).
+                if ((strcmp(argv[i], "-q") == 0) || (strcmp(argv[i], "-quiet") == 0)){
+                quiet = 1;  // suppresses final output
+                } else if ((strcmp(argv[i], "-help") == 0) || (strcmp(argv[i], "-h") == 0) 
+                        || (strcmp(argv[i], "-?") == 0)){
+                        printHelp();
+                        exit(EXIT_SUCCESS);
+                } else if ((strcmp(argv[i], "-v") == 0) || (strcmp(argv[i], "-version") == 0)){
+                        printVersion();
+                        exit(EXIT_SUCCESS);
+                } else if (strcmp(argv[i], "-x") == 0){
             
-        } else if(i == 1){
-            max_val = atof( argv[1] );
-        } else if(i == 2){
-            min_val = atof( argv[2] );
-        } else if(i == 3){
-            bit_resolution = atof( argv[3] );
-        }else {
-            cout << "invalid argument. Use -h or -help for usage";
-            exit(EXIT_FAILURE);
+                } else if(i == 1){
+                        max_val = atof( argv[1] );
+                } else if(i == 2){
+                        min_val = atof( argv[2] );
+                } else if(i == 3){
+                        bit_resolution = atof( argv[3] );
+                }else {
+                        cout << "invalid argument. Use -h or -help for usage";
+                        exit(EXIT_FAILURE);
+                }
         }
     }
-
     //calculate required bits
     increments = (max_val - min_val)/bit_resolution;
     bit_calc = log(increments)/log(2);
