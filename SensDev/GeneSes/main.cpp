@@ -337,7 +337,10 @@ double oxygen_sensor::linearise(){
 int main(int argc, char** argv) {
     
     sensor sensor1;
-    double max_val, min_val, bit_resolution;
+    double max_val = 10;
+    double min_val = 0;
+    double bit_resolution = 1;
+    
     double increments, bit_calc;
     int safe_bits, no_of_bits, i;
     int quiet = 0;  // Value for the "-q" optional argument. //
@@ -354,22 +357,18 @@ int main(int argc, char** argv) {
             exit(EXIT_SUCCESS);
         } else if (strcmp(argv[i], "-x") == 0){
             
-        } else if (strcmp(argv[i], "-max=") == 0){
-            int atm = atoi( argv[1] );
-        } else if (strcmp(argv[i], "-min=") == 0){
-            
+        } else if(i == 1){
+            max_val = atof( argv[1] );
+        } else if(i == 2){
+            min_val = atof( argv[2] );
+        } else if(i == 3){
+            bit_resolution = atof( argv[3] );
         }else {
-            cout << "invalid argument";
+            cout << "invalid argument. Use -h or -help for usage";
             exit(EXIT_FAILURE);
         }
     }
-        
-    cout << "Please enter desired maximum range: \n";
-    cin >> max_val;
-    cout << "Please enter desired minimum range: \n";
-    cin >> min_val;
-    cout << "Please enter desired resolution: \n";
-    cin >> bit_resolution;
+
     //calculate required bits
     increments = (max_val - min_val)/bit_resolution;
     bit_calc = log(increments)/log(2);
