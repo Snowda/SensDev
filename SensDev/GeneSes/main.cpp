@@ -67,7 +67,7 @@ public:
     void choose_processor(void);
     void choose_regulator(void);
     void choose_chips(void);
-    
+    void default_power_and_comms(string default_power, string default_comms);
 private:
     double measurement;
     double bit_reading;
@@ -295,6 +295,10 @@ void sensor::write_resolution(unsigned int value){
     bit_resolution = value;
 }
 
+void sensor::default_power_and_comms(string default_power, string default_comms){
+    comms_method = default_comms;
+    power_source = default_power;
+}
 /*
 double oxygen_sensor::linearise(){
         double fin;
@@ -344,7 +348,8 @@ int main(int argc, char** argv) {
     double increments, bit_calc;
     int safe_bits, no_of_bits, i;
     int quiet = 0;  // Value for the "-q" optional argument. //
-
+    char powCom_notifier = 1;
+    
     if(argc == 1){
         cout << "Please enter desired maximum range: \n";
          cin >> max_val;
@@ -363,9 +368,13 @@ int main(int argc, char** argv) {
                 } else if ((strcmp(argv[i], "-v") == 0) || (strcmp(argv[i], "-version") == 0)){
                         printVersion();
                         exit(EXIT_SUCCESS);
-                } else if (strcmp(argv[i], "-x") == 0){
-            
-                } else if(i == 1){
+                } else if (strcmp(argv[i], "-wireless") == 0){
+                        sensor1.default_power_and_comms("Inductive Charging", "Bluetooth");
+                        powCom_notifier = 0;
+                } else if (strcmp(argv[i], "-usb") == 0){
+                        sensor1.default_power_and_comms("USB", "USB");
+                        powCom_notifier = 0;
+                }else if(i == 1){
                         max_val = atof( argv[1] );
                 } else if(i == 2){
                         min_val = atof( argv[2] );
@@ -385,25 +394,26 @@ int main(int argc, char** argv) {
     safe_bits = no_of_bits + 1;
     sensor1.write_resolution(safe_bits);
     
-    cout << "What power source do you want to use? \n";
-    cout << "1. USB \n";
-    cout << "2. Mains \n";
-    cout << "3. Inductive Charging \n";
-    cout << "4. Battery \n";
-    cout << "5. 24 Volt \n";
-    cout << "6. 12 Volt \n";
-    //%i [Vv]olt"
-    sensor1.write_power_hardware();
+    if(powCom_notifier){
+        cout << "What power source do you want to use? \n";
+        cout << "1. USB \n";
+        cout << "2. Mains \n";
+        cout << "3. Inductive Charging \n";
+        cout << "4. Battery \n";
+        cout << "5. 24 Volt \n";
+        cout << "6. 12 Volt \n";
+        //%i [Vv]olt"
+        sensor1.write_power_hardware();
     
-    cout << "What Protocol do you want to use to communicate? \n";
-    cout << "1. 4-20mA \n";
-    cout << "2. RS232 \n";
-    cout << "3. USB \n";
-    cout << "4. Bluetooth \n";
-    cout << "5. WiFi \n";
-    //"multiple"?
-    sensor1.write_comms_hardware();
-    
+        cout << "What Protocol do you want to use to communicate? \n";
+        cout << "1. 4-20mA \n";
+        cout << "2. RS232 \n";
+        cout << "3. USB \n";
+        cout << "4. Bluetooth \n";
+        cout << "5. WiFi \n";
+        //"multiple"?
+        sensor1.write_comms_hardware();
+    }
     //cout << "What processor technology do you wish to use? \n";
     //cin >> processor;
     
