@@ -1,0 +1,1 @@
+Analog to digital converted code used for import
