@@ -1,9 +1,13 @@
 """turns a python file into a new project"""
-import sys, os, re, argparse
+from __future__ import division
+import sys, os, re, argparse, hashlib
 from PyQt4.QtGui import QWidget, QFileDialog
 from PyQt4.QtGui import QPushButton, QGridLayout
 from PyQt4.QtGui import QIcon, QApplication, QAction, QMainWindow
 from PyQt4.QtCore import SIGNAL, QSize
+
+from datetime import datetime
+
 
 class GenerateProject(QMainWindow):
     """generate project class"""
@@ -41,9 +45,9 @@ class GenerateProject(QMainWindow):
                 print "generated" #self.generate_all()
 
             #self.configure_script(True)
-    	else:
-        	print "choose one argument only"
-        	os._exit(0)
+        else:
+            print "choose one argument only"
+            os._exit(0)
 
     def open_dialog(self):
         """open file"""   
@@ -148,5 +152,138 @@ def main():
     target.show()
     app.exec_()
 
+    #choose_a2d_chip()
+    #choose_processor()
+    #choose_regulator()
+
 if __name__ == '__main__':
     main() 
+
+def part_lists():
+    atd_chip_list = ["Other1", "Other2", "Other3", "Other4", "Other", 
+    "Other", "Other", "Other", "Other", "Other10", "Other", "MCP3412", "Other", 
+    "Other", "Other", "Other", "Other", "Other", "Other", "Other", "Other", 
+    "Other22", "Other", "MSP3024", "Other", "Other", "Other", "Other", "Other", 
+    "Other30"]
+    power_source_list = ["Regulator", "USB"]
+    comms_chip_list = ["USB", "RS232"]
+    regulator_chip_list = ["5v Regulator", "12v Regulator", "LTC4032V12"]
+    processor_chip_list = ["PIC18f4525", "PIC16F84A"]
+
+def read_units():
+    return sensor_units
+
+def write_units():
+    """"""
+    units = raw_input('Units: ')
+
+def read_name():
+    return sensor_name
+
+def write_name():
+    """"""
+    name = raw_input('Sensor Name: ')
+    
+def read_input_value():
+    return bit_reading
+
+def read_resolution():
+    print bit_resolution
+
+def choose_chips():
+    choose_a2d_chip()
+    choose_processor()
+    choose_regulator()
+    
+def choose_a2d_chip():
+    part1 = "ADC_library/atod_"
+    part2 = ".c"
+
+    adc_string = part1+bit_resolution+part2
+    adc_file = open(adc_string, r)
+    adc_data = adc_file.readlines()
+    adc_file.close()
+
+    core = open("hardware_core.c", w)
+    core.write(adc_data)
+    core.close
+
+    a2d_chip = atd_chip_list[bit_resolution]
+
+def choose_processor():
+    processor_chip = processor_chip_list[1]
+
+def write_power_hardware():
+    power_source = raw_input('Power Source: ')
+    
+def choose_regulator():
+    regulator_chip = regulator_chip_list[3]
+
+def read_hardware():
+    print "Compiled on: " << __DATE__ << " " << __TIME__
+    print "Author: Conor Forde"
+    print "Power supply: "+power_source
+    read_resolution()
+    print " bit Analog to Digital converter: "+a2d_chip
+    print "Required chip for "+comms_method+" : "+comms_chip 
+    print "Processor: "+processor_chip
+    print "Firmware number: "+firmware_number
+
+def restore_settings():
+    """restore factory settings"""
+    print "factory settings restored"
+    
+def save_settings():
+    """store settings to file"""
+    print "settings saved"
+    
+def load_settings():
+    """load settings from file"""
+    print "settings loaded"
+
+def encryption(data):
+    """Encrypts given value"""
+    return hashlib.sha224(data).hexdigest()
+
+def login_input():
+    """user login protocol"""
+    ## First we check if the database exists.
+    if path.isfile('database.db'):
+        password_db = open('database.db', 'rb')
+        password_data = pickle.load(password_db)
+        password_db.close()
+        ## If it doesn't, we will create one.
+    else:
+        ## First we create the desired variable.
+        password_data = {encryption('admin') : encryption('admin'), 
+            encryption('user') : encryption('password')}
+        #needs user adjustment capibilities
+        ## Then we open a filehandle to it.
+        password_db = open('database.db', 'wb')
+        ## And then we dump the variable into the filehandle.
+        ## This will keep the variable intact between sessions,
+        ## next time you start your script, the variable will look the same.
+        pickle.dump(password_data, password_db)
+        password_db.close()
+
+    user = raw_input('Username: ')
+    _pass = getpass.getpass('Password: ')
+
+    if(encryption(user) in password_data 
+        and password_data[encryption(user)] == encryption(_pass)):
+        print 'Login sucessful. Welcome'
+        return True
+    else:
+        print "Login failed. Access denied."
+        return False
+
+def login():
+    """login overall process"""
+    if login_input():
+        return True
+    else:
+        print "Try again"
+        if login_input():
+            return True
+        else:
+            return False
