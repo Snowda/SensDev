@@ -1,7 +1,0 @@
---list of dependencies required to run code--
-
-PyQT4
-Pylint
-converage.py
-
-more to be announced
