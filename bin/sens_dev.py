@@ -1,28 +1,33 @@
 """turns a python file into a new project"""
 from __future__ import division
-import sys, os, re, argparse, hashlib
+import sys
+from os import makedirs, path
+import os
+from re import sub
+import argparse
+from hashlib import sha224
+from datetime import datetime
 from PyQt4.QtGui import QWidget, QFileDialog
 from PyQt4.QtGui import QPushButton, QGridLayout
 from PyQt4.QtGui import QIcon, QApplication, QAction, QMainWindow
 from PyQt4.QtCore import SIGNAL, QSize
 
-from datetime import datetime
 
 def restore_settings():
     """restore factory settings"""
-    print "factory settings restored"
-    
+    print("factory settings restored")
+
 def save_settings():
     """store settings to file"""
-    print "settings saved"
-    
+    print("settings saved")
+
 def load_settings():
     """load settings from file"""
-    print "settings loaded"
+    print("settings loaded")
 
 def encryption(data):
     """Encrypts given value"""
-    return hashlib.sha224(data).hexdigest()
+    return sha224(data).hexdigest()
 
 def login_input():
     """user login protocol"""
@@ -30,12 +35,10 @@ def login_input():
     if path.isfile('database.db'):
         password_db = open('database.db', 'rb')
         password_data = pickle.load(password_db)
-        password_db.close()
-        ## If it doesn't, we will create one.
-    else:
+    else: # If it doesn't, we will create one.
         ## First we create the desired variable.
-        password_data = {encryption('admin') : encryption('admin'), 
-            encryption('user') : encryption('password')}
+        password_data = {encryption('admin') : encryption('admin'),
+                         encryption('user') : encryption('password')}
         #needs user adjustment capibilities
         ## Then we open a filehandle to it.
         password_db = open('database.db', 'wb')
@@ -43,34 +46,33 @@ def login_input():
         ## This will keep the variable intact between sessions,
         ## next time you start your script, the variable will look the same.
         pickle.dump(password_data, password_db)
-        password_db.close()
+    password_db.close()
 
     user = raw_input('Username: ')
     _pass = getpass.getpass('Password: ')
 
-    if(encryption(user) in password_data 
-        and password_data[encryption(user)] == encryption(_pass)):
-        print 'Login sucessful. Welcome'
+    if(encryption(user) in password_data and password_data[encryption(user)] == encryption(_pass)):
+        print('Login sucessful. Welcome')
         return True
-    else:
-        print "Login failed. Access denied."
-        return False
+    
+    print("Login failed. Access denied.")
+    return False
 
 def login():
     """login overall process"""
     if login_input():
         return True
-    else:
-        print "Try again"
-        if login_input():
-            return True
-        else:
-            return False
+
+    print("Try again")
+    if login_input():
+        return True
+
+    return False
 
 class GenerateSensor(QMainWindow):
     """generate project class"""
     def __init__(self, data, parent=None):
-        """initializations"""   
+        """initializations"""
         super(GenerateSensor, self).__init__(parent)
 
         self.license_type = data.license
@@ -84,11 +86,7 @@ class GenerateSensor(QMainWindow):
 
         self.license_folder = self.projecti_parent+'docs/licenses/'
 
-        self.atd_chip_list = ["Other1", "Other2", "Other3", "Other4", "Other", 
-        "Other", "Other", "Other", "Other", "Other10", "Other", "MCP3412", "Other", 
-        "Other", "Other", "Other", "Other", "Other", "Other", "Other", "Other", 
-        "Other22", "Other", "MSP3024", "Other", "Other", "Other", "Other", "Other", 
-        "Other30"]
+        self.atd_chip_list = ["MCP3412", "MSP3024"]
         self.power_source_list = ["Regulator", "USB"]
         self.comms_chip_list = ["USB", "RS232"]
         self.regulator_chip_list = ["5v Regulator", "12v Regulator", "LTC4032V12"]
@@ -97,24 +95,24 @@ class GenerateSensor(QMainWindow):
         if str(data.name) == 'None':
             self.central_dialog()
             #formatting of input data
-            parse1 = re.sub('"', ' ', str(data.name))
+            parse1 = sub('"', ' ', str(data.name))
 
-            parse2 = re.sub("_", ' ', parse1).strip().lower()
+            parse2 = sub("_", ' ', parse1).strip().lower()
 
-            self.project_path = re.sub(" ", '_', parse2)
+            self.project_path = sub(" ", '_', parse2)
             if self.project_path.endswith(".py"):
-                self.target_program = os.path.basename(self.project_path)
-                self.target_name = re.sub(".py", "", self.target_program)
-                self.project_path = os.path.abspath(
-                    os.path.join(self.above_projecti, self.target_name))
-                os.makedirs(self.target_name)
+                self.target_program = path.basename(self.project_path)
+                self.target_name = sub(".py", "", self.target_program)
+                self.project_path = path.abspath(
+                    path.join(self.above_projecti, self.target_name))
+                makedirs(self.target_name)
                 
             if self.project_path is not "":
-                print "generated" #self.generate_all()
+                print("generated") #self.generate_all()
 
             #self.configure_script(True)
         else:
-            print "choose one argument only"
+            print("choose one argument only")
             os._exit(0)
 
     def open_dialog(self):
@@ -122,11 +120,11 @@ class GenerateSensor(QMainWindow):
         filename = str(QFileDialog.getOpenFileName(self, 'Open file', 
             self.above_projecti, "(*.py)"))
         if filename is not "":
-            self.target_program = os.path.basename(filename)   
-            self.target_name = re.sub(".py", "", self.target_program)
-            self.project_path = os.path.abspath(os.path.join(filename, 
+            self.target_program = path.basename(filename)   
+            self.target_name = sub(".py", "", self.target_program)
+            self.project_path = path.abspath(path.join(filename, 
                 os.pardir, self.target_name))
-            os.makedirs(self.target_name)
+            makedirs(self.target_name)
             self.generate_all()
 
     def new_dialog(self):
@@ -201,6 +199,7 @@ class GenerateSensor(QMainWindow):
             self.open_dialog)
 
     def read_units(self):
+        """"""
         return self.sensor_units
 
     def write_units(self):
@@ -208,6 +207,7 @@ class GenerateSensor(QMainWindow):
         self.sensor_units = raw_input('Units: ')
 
     def read_name(self):
+        """"""
         return self.sensor_name
 
     def write_name(self):
@@ -215,14 +215,17 @@ class GenerateSensor(QMainWindow):
         self.sensor_name = raw_input('Sensor Name: ')
         
     def read_input_value(self):
+        """"""
         return bit_reading
 
     def choose_chips(self):
+        """"""
         self.choose_a2d_chip()
         self.choose_processor()
         self.choose_regulator()
         
     def choose_a2d_chip(self):
+        """"""
         part1 = "ADC_library/atod_"
         part2 = ".c"
 
@@ -238,23 +241,27 @@ class GenerateSensor(QMainWindow):
         self.a2d_chip = atd_chip_list[bit_resolution]
 
     def choose_processor(self):
+        """"""
         self.processor_chip = self.processor_chip_list[1]
 
     def write_power_hardware(self):
+        """"""
         self.power_source = raw_input('Power Source: ')
         
     def choose_regulator(self):
+        """"""
         self.regulator_chip = self.regulator_chip_list[3]
 
     def read_hardware(self):
-        print "Compiled on: "+datetime.datetime.now()
-        print "Author: Conor Forde"
-        print "Power supply: "+self.power_source
-        print "Resolution: "+self.bit_resolution
-        print "Bit Analog to Digital converter: "+self.a2d_chip
-        print "Required chip for "+self.comms_method+" : "+self.comms_chip 
-        print "Processor: "+self.processor_chip
-        print "Firmware number: "+self.firmware_number
+        """"""
+        print("Compiled on: " + datetime.now()) # FIXME this is false. Get run time, not compile time
+        print("Author: Conor Forde")
+        print("Power supply: " + self.power_source)
+        print("Resolution: " + self.bit_resolution)
+        print("Bit Analog to Digital converter: " + self.a2d_chip)
+        print("Required chip for " + self.comms_method + " : " + self.comms_chip)
+        print("Processor: " + self.processor_chip)
+        print("Firmware number: " + self.firmware_number)
 
 def main():
     """Main function"""
